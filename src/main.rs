@@ -53,12 +53,22 @@ fn main() {
         }
     }
     lines[length as usize / 2].is0 = true;
+    for i in 0..lines.len() - 2 {
+        while !lines[i].points.is_empty() && lines[i + 1].points.is_empty() {
+            lines[i + 1].points = lines[i].points.clone();
+        }
+    }
+    for i in (1..lines.len() - 1).rev() {
+        while lines[i].points.is_empty() && !lines[i + 1].points.is_empty() {
+            lines[i].points = lines[i + 1].points.clone();
+        }
+    }
     lines.iter().for_each(|x| x.print());
 }
 
 // math is the function that is being graphed, will code parser later
 fn math(x: i64) ->  i64 {
-    let output = x + x;
+    let mut output = -x;
     output
 }
 
