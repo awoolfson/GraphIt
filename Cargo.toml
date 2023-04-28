@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 lalrpop-util = "0.19.1"
 regex = "1"
+"colored" = "2.0.0"
+arithmetic-parser = "0.3.0"

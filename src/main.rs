@@ -1,5 +1,7 @@
 // each horizontal represents one print on the graph, so one y value
 use::std::env;
+use colored::Colorize;
+mod parser;
 
 struct Horizontal {
     x_window: (i64, i64, usize),
@@ -47,12 +49,17 @@ fn main() {
     //     x_window = (-32, 32, 64);
     //     y_window = (-16, 16, 32);
     // }
+
+    //args
+
     x_window = (-32, 32, 64);
     y_window = (-16, 16, 32);
-    let size = 50;
+    let increment_parts = 1; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
+    let x_size = 20; // scope of equation, not actual size on screen
+    let y_size = 4;
 
-    let x_normalizer: f32 = x_window.2 as f32 / size as f32; // for conversion from real coords to math coords (/)
-    let y_normalizer: f32 = y_window.2 as f32 / size as f32; // for conversion from math coords to real coords (*)
+    let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
+    let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
     println!("x normalizer: {}, y_normalizer: {}", x_normalizer, y_normalizer);
 
     let mut lines = Vec::new();
@@ -65,44 +72,60 @@ fn main() {
     }
 
     for x_val in x_window.0..x_window.1 {
-
-        println!("for x in x window...");
-
-        let mut raw_height;
         let normalized_x = x_val as f32 / x_normalizer;
-        raw_height = math(normalized_x);
-
-        println!("x: {}, normalized_x: {}, raw height: {}", x_val, normalized_x, raw_height);
-
-        // if !realist {
-        //     raw_height /= 2.0;
-        // }
-
-        let normalized_y = raw_height * y_normalizer;
-
-        if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
-            let horizontals_index = height_to_index(normalized_y, y_window);
-            println!("normalized y: {}, y index: {}", normalized_y, horizontals_index);
-            lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
+        for i in 0..increment_parts {
+            let incremented_x = normalized_x + (i as f32 / (x_size as f32)/increment_parts as f32);
+            let raw_height = math(incremented_x);
+    
+            println!("x: {}, normalized_x: {}, raw height: {}", x_val, normalized_x, raw_height);
+    
+            // if !realist {
+            //     raw_height /= 2.0;
+            // }
+    
+            let normalized_y = raw_height * y_normalizer;
+    
+            if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
+                let horizontals_index = height_to_index(normalized_y, y_window);
+                println!("normalized y: {}, y index: {}\n", normalized_y, horizontals_index);
+                lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
+            } else {
+                println!("y out of range\n");
+            }
         }
     }
+
     lines[y_window.2 as usize / 2].is0 = true;
-    for i in 0..lines.len() - 2 {
-        while !lines[i].points.is_empty() && lines[i + 1].points.is_empty() {
-            lines[i + 1].points = lines[i].points.clone();
-        }
-    }
-    for i in (1..lines.len() - 1).rev() {
-        while lines[i].points.is_empty() && !lines[i + 1].points.is_empty() {
-            lines[i].points = lines[i + 1].points.clone();
-        }
-    }
+
+    /*
+    an issue with the following loops is that they can create "clusters", where there is a square of 4 points.
+    this happens because it cannot tell if the points are next to eachother and it will still clone, however the
+    problem of finding which point to clone is very difficult, so this should be fine for now.
+
+    also doesn't work with parabolo, sends a straight line out!
+
+    example of cluster:
+    x * x * x with size 50
+
+    This could potentially be fixed by actually making a more precise graph, incementing by 0.025 instead of 1 and then rounding
+     */
+
+    // for i in 0..lines.len() - 1 {
+    //     while !lines[i].points.is_empty() && lines[i + 1].points.is_empty() {
+    //         lines[i + 1].points = lines[i].points.clone();
+    //     }
+    // }
+    // for i in (0..lines.len()).rev() {
+    //     while lines[i].points.is_empty() && !lines[i + 1].points.is_empty() {
+    //         lines[i].points = lines[i + 1].points.clone();
+    //     }
+    // }
     lines.iter().for_each(|x| x.print());
 }
 
 // math is the function that is being graphed, will code parser later
 fn math(x: f32) ->  f32 {
-    let mut output = x * x * x;
+    let output = x.sin();
     output
 }
 
