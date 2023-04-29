@@ -32,9 +32,21 @@ pub mod parser {
     }
 
     pub fn tokenize(input: String) -> Result<Vec<Token>, &'static str> {
+        let functions = ["sin", "cos", "tan", "ln", "log", "sqrt", "abs"];
+        functions.map(|s| String::from(s));
         let mut output: Vec<Token> = Vec::new();
+        let mut cur_function: String = String::new();
         let mut cur_num: String = String::new();
-        for c in input.chars() {
+        let mut on_function = false;
+        let chars = input.chars();
+        for (idx, c) in chars.enumerate() {
+            // while on_function {
+            //     match cur_function {
+            //         functions[..] => {
+            //             on_function = false;
+            //         },
+            //     }
+            // }
             match c {
                 '0'..='9' => {
                     cur_num.push(c);
@@ -53,6 +65,13 @@ pub mod parser {
                         let num = cur_num.parse::<f32>().unwrap();
                         output.push(Token::Num(num));
                         cur_num = String::new();
+                    } else {
+                        let last = output.last();
+                        if output.is_empty() {
+                            output.push(Token::Num(0.0));   
+                        } else if let Token::Operator(Operator::LeftParen(_)) = last.unwrap() {
+                            output.push(Token::Num(0.0));
+                        }
                     }
                     output.push(Token::Operator(Operator::Subtract('-')));
                 }
@@ -106,8 +125,13 @@ pub mod parser {
                 }
                 ' ' => {}
                 _ => {
-                    println!("Invalid character found: {}", c);
-                    return Err("Invalid character");
+                    // if c.is_alphabetic() {
+                    //     on_function = true;
+                    //     cur_function.push(c);
+                    // } else {
+                        println!("Invalid character found: {}", c);
+                        return Err("Invalid character");
+                    //}
                 }
             }
         }

@@ -56,8 +56,7 @@ fn main() {
     println!("f(x) = ...");
     let mut input_string = String::new();
     std::io::stdin().read_line(&mut input_string);
-    let clean_input = String::from(input_string.trim());
-    
+    let clean_input = String::from(input_string.trim()); 
 
     let tokens = parser::parser::tokenize(clean_input).unwrap();
 
