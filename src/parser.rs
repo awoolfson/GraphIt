@@ -3,30 +3,125 @@ pub mod parser {
     pub enum Token {
         Operator(Operator),
         Num(f32),
+        Var,
     }
 
+    #[derive(Debug)]
     pub enum Operator {
-        Exp,
-        Multiply,
-        Divide,
-        Add,
-        Subtract,
-        LeftParen,
-        RightParen,
+        Exp(char),
+        Multiply(char),
+        Divide(char),
+        Add(char),
+        Subtract(char),
+        LeftParen(char),
+        RightParen(char),
     }
 
     impl Operator {
         pub fn get_precedence_and_is_left(&self) -> (usize, bool) {
             match self {
-                Operator::Exp => (4, false),
-                Operator::Multiply => (3, true),
-                Operator::Divide => (3, true),
-                Operator::Add => (2, true),
-                Operator::Subtract => (2, true),
-                Operator::LeftParen => (9, true),
-                Operator::RightParen => (0, true),
+                Operator::Exp(_) => (4, false),
+                Operator::Multiply(_) => (3, true),
+                Operator::Divide(_) => (3, true),
+                Operator::Add(_) => (2, true),
+                Operator::Subtract(_) => (2, true),
+                Operator::LeftParen(_) => (9, true),
+                Operator::RightParen(_) => (0, true),
             }
         }
+    }
+
+    pub fn tokenize(input: String) -> Result<Vec<Token>, &'static str> {
+        let mut output: Vec<Token> = Vec::new();
+        let mut cur_num: String = String::new();
+        for c in input.chars() {
+            match c {
+                '0'..='9' => {
+                    cur_num.push(c);
+                },
+                '.' => cur_num.push(c),
+                '+' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::Add('+')));
+                }
+                '-' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::Subtract('-')));
+                }
+                '*' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::Multiply('*')));
+                }
+                '/' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::Divide('/')));
+                }
+                '^' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::Exp('^')));
+                }
+                '(' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::LeftParen('(')));
+                }
+                ')' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Operator(Operator::RightParen(')')));
+                }
+                'x' => {
+                    if !cur_num.is_empty() {
+                        let num = cur_num.parse::<f32>().unwrap();
+                        output.push(Token::Num(num));
+                        cur_num = String::new();
+                    }
+                    output.push(Token::Var);
+                }
+                ' ' => {}
+                _ => {
+                    println!("Invalid character found: {}", c);
+                    return Err("Invalid character");
+                }
+            }
+        }
+        if !cur_num.is_empty() {
+            output.push(Token::Num(cur_num.parse::<f32>().unwrap()));
+        }
+        // for t in &output {
+        //     match t {
+        //         Token::Num(n) => println!("{}", n),
+        //         Token::Operator(o) => println!("{:?}", o),
+        //         Token::Var => println!("x"),
+        //     }
+        // }
+        Ok(output)
     }
 
     pub fn infix_to_postfix(infix: Vec<Token>) -> Vec<Token>{
@@ -34,7 +129,8 @@ pub mod parser {
         let mut stack: Vec<Operator> = Vec::new();
         for t in infix {
             match t {
-                Token::Num(n) => output_queue.push_back(t),
+                Token::Num(_) => output_queue.push_back(t),
+                Token::Var => output_queue.push_back(t),
                 Token::Operator(o) => {
                     while !stack.is_empty() { 
                         let cur_operator = &o;
@@ -44,9 +140,9 @@ pub mod parser {
                         if (cur_prec_and_left.1 && cur_prec_and_left.0 <= tos_prec_and_left.0)
                         || (!cur_prec_and_left.1 && cur_prec_and_left.0 < tos_prec_and_left.0) {
                             match cur_operator {
-                                Operator::RightParen => {
+                                Operator::RightParen(_) => {
                                     match top_of_stack {
-                                        Operator::LeftParen => {
+                                        Operator::LeftParen(_) => {
                                             stack.pop();
                                             break;
                                         },
@@ -58,7 +154,7 @@ pub mod parser {
                                 },
                                 _=> {
                                     match top_of_stack {
-                                        Operator::LeftParen => break,
+                                        Operator::LeftParen(_) => break,
                                         _=> {
                                             let to_push = Token::Operator(stack.pop().unwrap());
                                             output_queue.push_back(to_push);
@@ -72,7 +168,7 @@ pub mod parser {
                     } 
                     let cur_operator = o;
                     match cur_operator {
-                        Operator::RightParen => {},
+                        Operator::RightParen(_) => {},
                         _=> {
                             stack.push(cur_operator);
                         }
