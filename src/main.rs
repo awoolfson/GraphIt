@@ -1,6 +1,5 @@
 // each horizontal represents one print on the graph, so one y value
 use::std::env;
-use std::io::*;
 mod parser;
 pub use parser::*;
 struct Horizontal {
@@ -55,7 +54,11 @@ fn main() {
 
     println!("f(x) = ...");
     let mut input_string = String::new();
-    std::io::stdin().read_line(&mut input_string);
+    let res = std::io::stdin().read_line(&mut input_string);
+    if let Err(_) = res {
+        println!("error reading input");
+        return;
+    }
     let clean_input = String::from(input_string.trim()); 
 
     let tokens = parser::parser::tokenize(clean_input).unwrap();
@@ -91,7 +94,7 @@ fn main() {
 
     x_window = (-32, 32, 64);
     y_window = (-16, 16, 32);
-    let increment_parts = 8; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
+    let increment_parts = 1; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
 
     let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
     let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
@@ -150,7 +153,6 @@ fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
                     let num1 = stack.pop().unwrap();
                     let y = f.execute(num1);
                     stack.push(y);
-                    println!("{}", y)
                 } else {
                     let num1 = stack.pop().unwrap();
                     let num2 = stack.pop().unwrap();

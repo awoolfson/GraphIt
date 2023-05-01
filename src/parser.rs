@@ -1,6 +1,8 @@
 pub mod parser {
     use std::collections::VecDeque;
     #[derive(Debug)]
+
+    // used to store general tokens of the input string
     pub enum Token {
         Operator(Operator),
         Num(f32),
@@ -19,6 +21,7 @@ pub mod parser {
         Func(Function<'static>),
     }
 
+    // used to store all operators and functions
     impl Operator {
         pub fn get_precedence_and_is_left(&self) -> (usize, bool) {
             match self {
@@ -59,6 +62,8 @@ pub mod parser {
         }
     }
 
+    // converts input string to tokens
+    // offloaded as much work as possible fromt the shunting yard algorithm to the tokenizer
     pub fn tokenize(input: String) -> Result<Vec<Token>, &'static str> {
         let functions = ["sin", "cos", "tan", "ln", "log", "sqrt", "abs"];
         let functions = functions.map(|s| String::from(s));
@@ -70,10 +75,12 @@ pub mod parser {
             match c {
                 '0'..='9' => {
                     if !cur_function.is_empty() {
+                        // a number cannot come directly after a function
                         return Err("invalid function");
                     }
                     if cur_num.is_empty() {
                         if idx > 0 {
+                            // a number directly following a variable or right paren is a multiplication
                             let last = input.chars().nth(idx - 1).unwrap();
                             if last == 'x' || last == ')' {
                                 output.push(Token::Operator(Operator::Multiply('*')));
@@ -118,6 +125,7 @@ pub mod parser {
                 }
                 '(' => {
                     if !cur_function.is_empty() {
+                        // check if the previous group of characters is a valid function
                         if functions.contains(&cur_function) {
                             match cur_function.as_str() {
                                 "sin" => {
@@ -150,6 +158,7 @@ pub mod parser {
                                 },
                                 _=> {},
                             }
+                            // reset cur_function after pushing
                             cur_function = String::new();
                         } else {
                             return Err("invalid function");
@@ -158,6 +167,7 @@ pub mod parser {
                     if !cur_num.is_empty() {
                         let num = cur_num.parse::<f32>().unwrap();
                         output.push(Token::Num(num));
+                        //a number directly before parenthesis is a multiplication
                         output.push(Token::Operator(Operator::Multiply('*')));
                         cur_num = String::new();
                     } else if let Some(&Token::Var) = output.last() {
@@ -243,6 +253,7 @@ pub mod parser {
                 }
                 ' ' => {}
                 _ => {
+                    // is alphabetic checks if it could be part of a valid function
                     if c.is_alphabetic() {
                         cur_num = check_cur_num(&mut output, cur_num);
                         if cur_function.is_empty() && idx > 0 {
@@ -262,15 +273,14 @@ pub mod parser {
         if !cur_num.is_empty() {
             output.push(Token::Num(cur_num.parse::<f32>().unwrap()));
         }
-        println!("tokens:");
-        for t in &output {
-            match t {
-                Token::Num(n) => println!("{}", n),
-                Token::Operator(o) => println!("{:?}", o),
-                Token::Var => println!("x"),
-            }
-        }
-        println!("done");
+        // for printing tokens
+        // for t in &output {
+        //     match t {
+        //         Token::Num(n) => println!("{}", n),
+        //         Token::Operator(o) => println!("{:?}", o),
+        //         Token::Var => println!("x"),
+        //     }
+        // }
         Ok(output)
     }
 
