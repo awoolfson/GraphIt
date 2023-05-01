@@ -245,8 +245,11 @@ pub mod parser {
                 _ => {
                     if c.is_alphabetic() {
                         cur_num = check_cur_num(&mut output, cur_num);
-                        if cur_function.is_empty() {
-                            output.push(Token::Operator(Operator::Multiply('*')));
+                        if cur_function.is_empty() && idx > 0 {
+                            let last = input.chars().nth(idx - 1).unwrap();
+                            if last == 'x' || last == ')' || last.is_numeric() {
+                                output.push(Token::Operator(Operator::Multiply('*')));
+                            }
                         }
                         cur_function.push(c);
                     } else {

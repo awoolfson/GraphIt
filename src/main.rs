@@ -91,7 +91,7 @@ fn main() {
 
     x_window = (-32, 32, 64);
     y_window = (-16, 16, 32);
-    let increment_parts = 1; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
+    let increment_parts = 8; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
 
     let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
     let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
