@@ -138,21 +138,30 @@ fn main() {
 // }
 
 fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
+    println!("math on postfix start");
     let mut stack: Vec<f32> = Vec::new();
     for t in postfix {
+        println!("{:?}", t);
         match t {
             parser::parser::Token::Num(n) => stack.push(*n),
             parser::parser::Token::Var => stack.push(x),
             parser::parser::Token::Operator(o) => {
-                let num1 = stack.pop().unwrap();
-                let num2 = stack.pop().unwrap();
-                match o {
-                    parser::parser::Operator::Exp(_) => stack.push(num2.powf(num1)),
-                    parser::parser::Operator::Multiply(_) => stack.push(num2 * num1),
-                    parser::parser::Operator::Divide(_) => stack.push(num2 / num1),
-                    parser::parser::Operator::Add(_) => stack.push(num2 + num1),
-                    parser::parser::Operator::Subtract(_) => stack.push(num2 - num1),
-                    _=> {},
+                if let parser::parser::Operator::Func(f) = o {
+                    let num1 = stack.pop().unwrap();
+                    let y = f.execute(num1);
+                    stack.push(y);
+                    println!("{}", y)
+                } else {
+                    let num1 = stack.pop().unwrap();
+                    let num2 = stack.pop().unwrap();
+                    match o {
+                        parser::parser::Operator::Exp(_) => stack.push(num2.powf(num1)),
+                        parser::parser::Operator::Multiply(_) => stack.push(num2 * num1),
+                        parser::parser::Operator::Divide(_) => stack.push(num2 / num1),
+                        parser::parser::Operator::Add(_) => stack.push(num2 + num1),
+                        parser::parser::Operator::Subtract(_) => stack.push(num2 - num1),    
+                        _=> {},
+                    }
                 }
             }
         }
