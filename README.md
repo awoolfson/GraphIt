@@ -23,13 +23,13 @@ cargo run
 The calculator supports various mathematical functions such as addition, subtraction, multiplication, division, trig functions, and more. To use the calculator, enter a mathemeatical function of the variable "x" after the the program prompts you "f(x) = ..."
 For example, to plot a straight horizontal line type...
 
-```
+```text
 x
 ```
 
 And press enter. The calculator will display the result:
 
-```
+```text
                                 |                              *
                                 |                            **
                                 |                          **
@@ -71,13 +71,13 @@ Here are some more complicated functions to try out!
 
 Example 1
 
-```
+```text
 -x + sin(-x)
 ```
 
 outputs...
 
-```
+```text
 ****                            |
     **                          |
       *                         |
@@ -114,12 +114,13 @@ outputs...
 
 Example 2
 
-```
+```text
 abs(x)+-x
 ```
 
 outputs...
-```
+
+```text
                                 |
                  *              |
                   *             |
@@ -156,13 +157,13 @@ outputs...
 
 Example 3
 
-```
+```text
 x2^sin(x)*1.2
 ```
 
 outputs...
 
-```
+```text
                                 |
                                 |                 *      *
                                 |             *
