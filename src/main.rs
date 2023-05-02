@@ -35,10 +35,6 @@ impl Horizontal {
 }
 
 fn main() {
-    let debug = false;
-    if debug {
-        env::set_var("RUST_BACKTRACE", "1");
-    }
 
     let mut x_size: i64 = 32;
     let mut y_size: i64 = 32;
@@ -63,29 +59,7 @@ fn main() {
 
     let tokens = parser::parser::tokenize(clean_input).unwrap();
 
-    if debug { 
-        println!("\ninitial tokens\n");
-        for t in &tokens {
-            match t {
-                parser::parser::Token::Num(n) => println!("{}", n),
-                parser::parser::Token::Operator(o) => println!("{:?}", o),
-                parser::parser::Token::Var => println!("x"),
-            }
-        }
-    }
-
     let postfix = parser::parser::infix_to_postfix(tokens);
-
-    if debug {
-        println!("postfix tokens\n");
-        for t in &postfix {
-            match t {
-                parser::parser::Token::Num(n) => println!("{}", n),
-                parser::parser::Token::Operator(o) => println!("{:?}", o),
-                parser::parser::Token::Var => println!("x"),
-            }
-        }
-    }
 
     let x_window;
     let y_window;
@@ -98,7 +72,6 @@ fn main() {
 
     let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
     let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
-    if debug { println!("x normalizer: {}, y_normalizer: {}", x_normalizer, y_normalizer); }
 
     let mut lines = Vec::new();
     for _ in 0..y_window.2 {
@@ -115,17 +88,12 @@ fn main() {
         for i in 0..increment_parts {
             let incremented_x = normalized_x + (i as f32 / (x_size as f32)/increment_parts as f32);
             let raw_height = math_on_postfix(&postfix, incremented_x);
-    
-            if debug { println!("x: {}, normalized_x: {}, raw height: {}", x_val, normalized_x, raw_height); }
-    
+       
             let normalized_y = raw_height * y_normalizer;
     
             if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
                 let horizontals_index = height_to_index(normalized_y, y_window);
-                if debug { println!("normalized y: {}, y index: {}\n", normalized_y, horizontals_index); }
                 lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
-            } else {
-                if debug { println!("y out of range\n"); }
             }
         }
     }
@@ -133,12 +101,6 @@ fn main() {
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print());
 }
-
-// math is the function that is being graphed, will code parser later
-// fn math(x: f32) ->  f32 {
-//     let output = x.sin();
-//     output
-// }
 
 fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
     //println!("math on postfix start");
