@@ -141,10 +141,10 @@ fn main() {
 // }
 
 fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
-    println!("math on postfix start");
+    //println!("math on postfix start");
     let mut stack: Vec<f32> = Vec::new();
     for t in postfix {
-        println!("{:?}", t);
+        //println!("{:?}", t);
         match t {
             parser::parser::Token::Num(n) => stack.push(*n),
             parser::parser::Token::Var => stack.push(x),

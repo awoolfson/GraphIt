@@ -348,12 +348,10 @@ pub mod parser {
             output_queue.push_back(to_push);
         }
         let mut output: Vec<Token> = Vec::new();
-        println!("transferring form queue to vector");
         for t in output_queue {
-            println!("{:?}", t);
+            //println!("{:?}", t);
             output.push(t);
         }
-        println!("done");
         output
     }
 }
