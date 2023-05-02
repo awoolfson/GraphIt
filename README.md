@@ -110,11 +110,15 @@ outputs...
                                 |                          **
                                 |    
 ```
+
 Example 2
+
 ```
 abs(x)+-x
 ```
+
 outputs...
+```
                                 |
                  *              |
                   *             |
@@ -148,7 +152,9 @@ outputs...
                                 |
                                 |
 ```
+
 Example 3
+
 ```
 x2^sin(x)*1.2
 ```
