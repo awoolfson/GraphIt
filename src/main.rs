@@ -1,7 +1,8 @@
 // each horizontal represents one print on the graph, so one y value
 use::std::env;
+use::colored::Colorize;
 mod parser;
-pub use parser::*;
+pub use parser::parser as p;
 struct Horizontal {
     x_window: (i64, i64, usize),
     points: Vec<usize>,
@@ -10,7 +11,7 @@ struct Horizontal {
 
 impl Horizontal {
     // print constructs the string and prints it
-    fn print(&self) {
+    fn print(&self, color: &String) {
         let mut line: String;
         if self.is0 {
             line = std::iter::repeat("-").take(self.x_window.2).collect::<String>();
@@ -21,7 +22,7 @@ impl Horizontal {
         for x in self.points.iter() {
             Self::replace_char(&mut line, *x, '*');
         }
-        println!("{}", line);
+        println!("{}", Self::color(&mut line, color));
     }
 
     // replace_char replaces the character at index with newchar, used for plotting
@@ -32,12 +33,27 @@ impl Horizontal {
         assert!(newchar.is_ascii());
         s_bytes[index] = newchar as u8;
     }
+
+    fn color(input: &mut String, color: &String) -> String {
+        match color.as_str() {
+            "red" => input.red().to_string(),
+            "blue" => input.blue().to_string(),
+            "green" => input.green().to_string(),
+            "yellow" => input.yellow().to_string(),
+            "magenta" => input.magenta().to_string(),
+            "cyan" => input.cyan().to_string(),
+            "white" => input.white().to_string(),
+            "black" => input.black().to_string(),
+            _ => input.to_string(),
+        }
+    }
 }
 
 fn main() {
 
     let mut x_size: i64 = 32;
     let mut y_size: i64 = 32;
+    let mut color: String = String::new();
 
     let args: Vec<String> = env::args().collect();
     for (idx, a) in args.iter().enumerate() {
@@ -45,6 +61,8 @@ fn main() {
             x_size = args[idx + 1].parse::<i64>().unwrap();
         } else if a == "-ysize" {
             y_size = args[idx + 1].parse::<i64>().unwrap();
+        } else if a == "-c" {
+            color = args[idx + 1].clone(); 
         }
     }
 
@@ -57,9 +75,9 @@ fn main() {
     }
     let clean_input = String::from(input_string.trim()); 
 
-    let tokens = parser::parser::tokenize(clean_input).unwrap();
+    let tokens = p::tokenize(clean_input).unwrap();
 
-    let postfix = parser::parser::infix_to_postfix(tokens);
+    let postfix = p::infix_to_postfix(tokens);
 
     let x_window;
     let y_window;
@@ -99,35 +117,24 @@ fn main() {
     }
 
     lines[y_window.2 as usize / 2].is0 = true;
-    lines.iter().for_each(|x| x.print());
+    lines.iter().for_each(|x| x.print(&color));
 }
 
-fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
-    //println!("math on postfix start");
+fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
     let mut stack: Vec<f32> = Vec::new();
     for t in postfix {
-        //println!("{:?}", t);
         match t {
-            parser::parser::Token::Num(n) => stack.push(*n),
-            parser::parser::Token::Var => stack.push(x),
-            parser::parser::Token::Operator(o) => {
-                if let parser::parser::Operator::Func(f) = o {
-                    let num1 = stack.pop().unwrap();
-                    let y = f.execute(num1);
-                    stack.push(y);
-                } else {
-                    let num1 = stack.pop().unwrap();
-                    let num2 = stack.pop().unwrap();
-                    match o {
-                        // add execute function to operator enum?
-                        parser::parser::Operator::Exp(_) => stack.push(num2.powf(num1)),
-                        parser::parser::Operator::Multiply(_) => stack.push(num2 * num1),
-                        parser::parser::Operator::Divide(_) => stack.push(num2 / num1),
-                        parser::parser::Operator::Add(_) => stack.push(num2 + num1),
-                        parser::parser::Operator::Subtract(_) => stack.push(num2 - num1),    
-                        _=> {},
-                    }
+            p::Token::Num(n) => stack.push(*n),
+            p::Token::Var => stack.push(x),
+            p::Token::Operator(o) => {
+                let num1 = stack.pop().unwrap();
+                let mut num2: f32 = 0.0;
+                match o {
+                    p::Operator::Func(_) => {},
+                    _=> { num2 = stack.pop().unwrap(); }
                 }
+                let y = o.execute(num2, num1);
+                stack.push(y);
             }
         }
     }

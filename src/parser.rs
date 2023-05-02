@@ -35,6 +35,18 @@ pub mod parser {
                 Operator::RightParen(_) => (0, true),
             }
         }
+
+        pub fn execute(&self, num2: f32, num1: f32) -> f32 {
+            match self {
+                Operator::Exp(_) => num2.powf(num1),
+                Operator::Multiply(_) => num2 * num1,
+                Operator::Divide(_) => num2 / num1,
+                Operator::Add(_) => num2 + num1,
+                Operator::Subtract(_) => num2 - num1,
+                Operator::Func(f) => f.execute(num1),
+                _=> 0.0,
+            }
+        }
     }
 
     #[derive(Debug)]
@@ -236,7 +248,7 @@ pub mod parser {
                                 },
                                 _=> {
                                     return Err("Syntax error");
-                                }
+                                },
                             }
                         },
                         Some(Token::Num(_)) => {
