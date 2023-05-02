@@ -24,43 +24,44 @@ The calculator supports various mathematical functions such as addition, subtrac
 For example, to plot a straight horizontal line type...
 
 ```
-2 + 3
+x
 ```
 
 And press enter. The calculator will display the result:
 
 ```
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-****************************************************************
-                                |
-                                |
-                                |
-                                |
---------------------------------|-------------------------------
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
-                                |
+                                |                              *
+                                |                            **
+                                |                          **
+                                |                        **
+                                |                      **
+                                |                    **
+                                |                  **
+                                |                **
+                                |              **
+                                |            **
+                                |          **
+                                |        **
+                                |      **
+                                |    **
+                                |  **
+                                |**
+-------------------------------**-------------------------------
+                             ** |
+                           **   |
+                         **     |
+                       **       |
+                     **         |
+                   **           |
+                 **             |
+               **               |
+             **                 |
+           **                   |
+         **                     |
+       **                       |
+     **                         |
+   **                           |
+ **                             |
 ```
 
 The calculator supports built in functions for log(), ln(), abs(), sqrt(), sin(), cos(), and tan(). Note that each of these must be used with

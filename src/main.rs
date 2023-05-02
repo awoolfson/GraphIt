@@ -157,6 +157,7 @@ fn math_on_postfix(postfix: &Vec<parser::parser::Token>, x: f32) -> f32 {
                     let num1 = stack.pop().unwrap();
                     let num2 = stack.pop().unwrap();
                     match o {
+                        // add execute function to operator enum?
                         parser::parser::Operator::Exp(_) => stack.push(num2.powf(num1)),
                         parser::parser::Operator::Multiply(_) => stack.push(num2 * num1),
                         parser::parser::Operator::Divide(_) => stack.push(num2 / num1),
