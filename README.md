@@ -68,6 +68,8 @@ parenthesis. Also note that all instances of x must be lowercase. You can use ex
 
 Here are some more complicated functions to try out!
 
+Example 1
+
 ```
 -x + sin(-x)
 ```
@@ -108,12 +110,12 @@ outputs...
                                 |                          **
                                 |    
 ```
-
+Example 2
 ```
 abs(x)+-x
 ```
 outputs...
-
+                                |
                  *              |
                   *             |
                    *            |
@@ -146,7 +148,7 @@ outputs...
                                 |
                                 |
 ```
-
+Example 3
 ```
 x2^sin(x)*1.2
 ```
