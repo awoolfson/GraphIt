@@ -62,7 +62,7 @@ fn main() {
         } else if a == "-ysize" {
             y_size = args[idx + 1].parse::<i64>().unwrap();
         } else if a == "-c" {
-            color = args[idx + 1].clone(); 
+            color = args[idx + 1].clone();
         }
     }
 
@@ -74,15 +74,10 @@ fn main() {
         return;
     }
     let clean_input = String::from(input_string.trim()); 
-
     let tokens = p::tokenize(clean_input).unwrap();
-
     let postfix = p::infix_to_postfix(tokens);
-
     let x_window;
     let y_window;
-
-    //args
 
     x_window = (-32, 32, 64);
     y_window = (-16, 16, 32);
@@ -115,7 +110,6 @@ fn main() {
             }
         }
     }
-
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print(&color));
 }
@@ -128,7 +122,7 @@ fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
             p::Token::Var => stack.push(x),
             p::Token::Operator(o) => {
                 let num1 = stack.pop().unwrap();
-                let mut num2: f32 = 0.0;
+                let mut num2: f32 = 0.0; // placeholder value
                 match o {
                     p::Operator::Func(_) => {},
                     _=> { num2 = stack.pop().unwrap(); }

@@ -93,7 +93,7 @@ pub mod parser {
                     if cur_num.is_empty() {
                         if idx > 0 {
                             // a number directly following a variable or right paren is a multiplication
-                            let last = input.chars().nth(idx - 1).unwrap();
+                            let last = input.chars().nth(idx - 1).unwrap_or_default();
                             if last == 'x' || last == ')' {
                                 output.push(Token::Operator(Operator::Multiply('*')));
                             }
@@ -177,7 +177,7 @@ pub mod parser {
                         }
                     }
                     if !cur_num.is_empty() {
-                        let num = cur_num.parse::<f32>().unwrap();
+                        let num = cur_num.parse::<f32>().unwrap_or_default();
                         output.push(Token::Num(num));
                         //a number directly before parenthesis is a multiplication
                         output.push(Token::Operator(Operator::Multiply('*')));
@@ -199,7 +199,7 @@ pub mod parser {
                         return Err("Syntax error");
                     }
                     if !cur_num.is_empty() {
-                        let num = cur_num.parse::<f32>().unwrap();
+                        let num = cur_num.parse::<f32>().unwrap_or_default();
                         output.push(Token::Num(num));
                         output.push(Token::Operator(Operator::Multiply('*')));
                         cur_num = String::new();
@@ -243,8 +243,7 @@ pub mod parser {
                                     output.push(Token::Operator(Operator::Multiply('*')));
                                 },
                                 Operator::RightParen(_) => {
-                                    output.push(Token::Num(-1.0));
-                                    output.push(Token::Operator(Operator::Multiply('*')));
+                                    output.push(Token::Operator(Operator::Subtract('-')));
                                 },
                                 _=> {
                                     return Err("Syntax error");
@@ -269,7 +268,7 @@ pub mod parser {
                     if c.is_alphabetic() {
                         cur_num = check_cur_num(&mut output, cur_num);
                         if cur_function.is_empty() && idx > 0 {
-                            let last = input.chars().nth(idx - 1).unwrap();
+                            let last = input.chars().nth(idx - 1).unwrap_or_default();
                             if last == 'x' || last == ')' || last.is_numeric() {
                                 output.push(Token::Operator(Operator::Multiply('*')));
                             }
@@ -283,7 +282,7 @@ pub mod parser {
             }
         }
         if !cur_num.is_empty() {
-            output.push(Token::Num(cur_num.parse::<f32>().unwrap()));
+            output.push(Token::Num(cur_num.parse::<f32>().unwrap_or_default()));
         }
         // for printing tokens
         // for t in &output {
@@ -298,7 +297,7 @@ pub mod parser {
 
     fn check_cur_num(tokens_output: &mut Vec<Token>, cur_num: String) -> String {
         if !cur_num.is_empty() {
-            let num = cur_num.parse::<f32>().unwrap();
+            let num = cur_num.parse::<f32>().unwrap_or_default();
             tokens_output.push(Token::Num(num));
             String::new()
         } else {
