@@ -1,8 +1,8 @@
 pub mod image_generator {
     use image::{RgbImage, Rgb, ImageBuffer};
 
-    const WIDTH: u32 = 1080;
-    const HEIGHT: u32 = 1080;
+    pub const WIDTH: u32 = 1080;
+    pub const HEIGHT: u32 = 1080;
 
     pub fn generate_image(points: Vec<(f32, f32)>) {
         let mut img = generate_base_image();

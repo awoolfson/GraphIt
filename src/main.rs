@@ -41,8 +41,8 @@ fn main() {
 
     let x_normalizer_cli: f32 = x_window.2 as f32 / x_size as f32;
     let y_normalizer_cli: f32 = y_window.2 as f32 / y_size as f32;
-    let x_normalizer_img: f32 = 1080.0 / x_size as f32;
-    let y_normalizer_img: f32 = 1080.0 / y_size as f32;
+    let x_normalizer_img: f32 = img::WIDTH as f32 / x_size as f32;
+    let y_normalizer_img: f32 = img::HEIGHT as f32 / y_size as f32;
 
     let mut lines = Vec::new();
     for _ in 0..y_window.2 {
@@ -52,8 +52,6 @@ fn main() {
             is0: false,
         });
     }
-
-    let mut points = Vec::<(f32, f32)>::new();
 
     for x_val in x_window.0..x_window.1 {
         // for cli
@@ -65,16 +63,21 @@ fn main() {
             lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
         }
     }
-    
-    for x_val in -x_size/2..x_size/2 {
-        let normalized_x = x_val as f32 * x_normalizer_img;
-        let raw_height = math_on_postfix(&postfix, x_val as f32);
-        let normalized_y = raw_height * y_normalizer_img;
-        points.push((normalized_x as f32, normalized_y)); 
-    }
 
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print(&color));
+
+    let mut points = Vec::<(f32, f32)>::new();
+    
+    let lower = -(img::WIDTH as i32)/2;
+    let upper = (img::WIDTH as i32)/2;
+    for x_val in lower..upper {
+        let normalized_x = x_val as f32 / x_normalizer_img;
+        let raw_height = math_on_postfix(&postfix, normalized_x as f32);
+        let normalized_y = raw_height * y_normalizer_img;
+        points.push((x_val as f32, normalized_y)); 
+    }
+
     generate_image(points);
 }
 
