@@ -1,4 +1,4 @@
-//TODO: add more arguments for cli (image filepath, server), build API, build simple frontend (react?)
+//TODO: fix graph lines using crosses instead of lines, fix filepath for image generation
 use::std::env;
 use::std::path::Path;
 mod parser;
