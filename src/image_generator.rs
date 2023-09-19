@@ -42,11 +42,6 @@ pub mod image_generator {
                     }
                 }
             }
-
-            // used for drawing linear connectors between points if separated by more than 1 width unit
-            else if prev != (WIDTH, HEIGHT) {
-                
-            }
             prev = (x as u32, y as u32);
         }
 
@@ -57,6 +52,12 @@ pub mod image_generator {
     fn generate_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {
         let mut img = RgbImage::new(WIDTH, HEIGHT);
         generate_axes(540, 540, 6, &mut img);
+        for i in 0..WIDTH {
+            let col = Rgb([255, 0, 0]);
+            //redraw main axes to be on top
+            img.put_pixel(540, i, col);
+            img.put_pixel(i, 540, col); 
+        }
         img
     }
 
@@ -68,12 +69,19 @@ pub mod image_generator {
         } else if num > 10 {
             num = 10;
         }
-        let col = (25 * num) as u8;
-        length /= 2;
-        for i in 0..WIDTH {
-            img.put_pixel(center, i, Rgb([col, 0, 0]));
-            img.put_pixel(i, center, Rgb([col, 0, 0])); 
+        let mut red = 1;
+        if length > 100 {
+            red = (length/2) - 15;
         }
+        else if length > 15 {
+            red = length/2;
+        }
+        let col = Rgb([red as u8, 0, 0]);
+        for i in 0..WIDTH {
+            img.put_pixel(center, i, col);
+            img.put_pixel(i, center, col); 
+        }
+        length /= 2;
         generate_axes(center + length, length, num - 1, img);
         generate_axes(center - length, length, num - 1, img);
     }
