@@ -1,53 +1,12 @@
-// each horizontal represents one print on the graph, so one y value
+//TODO: add more arguments for cli (image filepath, server), build API, build simple frontend (react?)
 use::std::env;
-use::colored::Colorize;
 mod parser;
 pub use parser::parser as p;
-struct Horizontal {
-    x_window: (i64, i64, usize),
-    points: Vec<usize>,
-    is0: bool,
-}
+mod image_generator;
+pub use image_generator::image_generator as img;
 
-impl Horizontal {
-    // print constructs the string and prints it
-    fn print(&self, color: &String) {
-        let mut line: String;
-        if self.is0 {
-            line = std::iter::repeat("-").take(self.x_window.2).collect::<String>();
-        } else {
-            line = std::iter::repeat(" ").take(self.x_window.2).collect::<String>();
-        }
-        Self::replace_char(&mut line, self.x_window.2 / 2, '|');
-        for x in self.points.iter() {
-            Self::replace_char(&mut line, *x, '*');
-        }
-        println!("{}", Self::color(&mut line, color));
-    }
-
-    // replace_char replaces the character at index with newchar, used for plotting
-    fn replace_char(s: &mut str, index: usize, newchar: char) {
-        let s_bytes: &mut [u8] = unsafe { s.as_bytes_mut() };
-        assert!(index < s_bytes.len());
-        assert!(s_bytes[index].is_ascii());
-        assert!(newchar.is_ascii());
-        s_bytes[index] = newchar as u8;
-    }
-
-    fn color(input: &mut String, color: &String) -> String {
-        match color.as_str() {
-            "red" => input.red().to_string(),
-            "blue" => input.blue().to_string(),
-            "green" => input.green().to_string(),
-            "yellow" => input.yellow().to_string(),
-            "magenta" => input.magenta().to_string(),
-            "cyan" => input.cyan().to_string(),
-            "white" => input.white().to_string(),
-            "black" => input.black().to_string(),
-            _ => input.to_string(),
-        }
-    }
-}
+use crate::img::generate_image;
+mod horizontal;
 
 fn main() {
 
@@ -76,19 +35,18 @@ fn main() {
     let clean_input = String::from(input_string.trim()); 
     let tokens = p::tokenize(clean_input).unwrap();
     let postfix = p::infix_to_postfix(tokens);
-    let x_window;
-    let y_window;
 
-    x_window = (-32, 32, 64);
-    y_window = (-16, 16, 32);
-    let increment_parts = 1; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
+    let x_window = (-32, 32, 64); // (min, max, size)
+    let y_window = (-16, 16, 32);
 
-    let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
-    let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
+    let x_normalizer_cli: f32 = x_window.2 as f32 / x_size as f32;
+    let y_normalizer_cli: f32 = y_window.2 as f32 / y_size as f32;
+    let x_normalizer_img: f32 = img::WIDTH as f32 / x_size as f32;
+    let y_normalizer_img: f32 = img::HEIGHT as f32 / y_size as f32;
 
     let mut lines = Vec::new();
     for _ in 0..y_window.2 {
-        lines.push(Horizontal {
+        lines.push(horizontal::Horizontal {
             x_window: x_window,
             points: Vec::new(),
             is0: false,
@@ -96,22 +54,31 @@ fn main() {
     }
 
     for x_val in x_window.0..x_window.1 {
-        // consider removing the increment feature, maybe this is silly
-        let normalized_x = x_val as f32 / x_normalizer;
-        for i in 0..increment_parts {
-            let incremented_x = normalized_x + (i as f32 / (x_size as f32)/increment_parts as f32);
-            let raw_height = math_on_postfix(&postfix, incremented_x);
-       
-            let normalized_y = raw_height * y_normalizer;
-    
-            if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
-                let horizontals_index = height_to_index(normalized_y, y_window);
-                lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
-            }
+        // for cli
+        let normalized_x = x_val as f32 / x_normalizer_cli;
+        let raw_height = math_on_postfix(&postfix, normalized_x);
+        let normalized_y = raw_height * y_normalizer_cli;
+        if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
+            let horizontals_index = height_to_index(normalized_y, y_window);
+            lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
         }
     }
+
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print(&color));
+
+    let mut points = Vec::<(f32, f32)>::new();
+    
+    let lower = -(img::WIDTH as i32)/2;
+    let upper = (img::WIDTH as i32)/2;
+    for x_val in lower..upper {
+        let normalized_x = x_val as f32 / x_normalizer_img;
+        let raw_height = math_on_postfix(&postfix, normalized_x as f32);
+        let normalized_y = raw_height * y_normalizer_img;
+        points.push((x_val as f32, normalized_y)); 
+    }
+
+    generate_image(points, &color);
 }
 
 fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
