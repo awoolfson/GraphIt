@@ -20,16 +20,31 @@ pub mod image_generator {
                 img.put_pixel(x as u32, y as u32, Rgb([0, 255, 0]));
             }
             if prev != (WIDTH, HEIGHT) {
-                let mut inter_x: f32 = prev.0 as f32;
-                while inter_x < x {
-                    let prev1 = prev.1 as f32;
-                    let prev0 = prev.0 as f32;
-                    let inter_y: f32 = prev1 - (prev1 - y) * (inter_x - prev0) / (x - prev0);
-                    if inter_y > 0.0 && inter_y < HEIGHT as f32 { 
-                        img.put_pixel(inter_x as u32, inter_y as u32, Rgb([0, 255, 0]));
+                let prev_y = prev.1 as f32;
+                let prev_x = prev.0 as f32;
+                if prev_x < x - 1.0 {
+                    let mut inter_x: f32 = prev.0 as f32;
+                    while inter_x < x {
+                        let inter_y: f32 = prev_y - (prev_y - y) * (inter_x - prev_x) / (x - prev_x);
+                        if inter_y > 0.0 && inter_y < HEIGHT as f32 { 
+                            img.put_pixel(inter_x as u32, inter_y as u32, Rgb([0, 255, 0]));
+                        }
+                        inter_x += 1.0;
                     }
-                    inter_x += 1.0;
+                } else if prev_y < y {
+                    for inter_y in prev_y as u32..y as u32 {
+                        img.put_pixel(x as u32, inter_y, Rgb([0, 255, 0]));
+                    }
+                } else if prev_y > y {
+                    for inter_y in y as u32..prev_y as u32 {
+                        img.put_pixel(x as u32, inter_y, Rgb([0, 255, 0]));
+                    }
                 }
+            }
+
+            // used for drawing linear connectors between points if separated by more than 1 width unit
+            else if prev != (WIDTH, HEIGHT) {
+                
             }
             prev = (x as u32, y as u32);
         }
