@@ -87,7 +87,6 @@ fn main() {
 
 fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
     let mut stack: Vec<f32> = Vec::new();
-    let mut flag = true;
     for t in postfix {
         match t {
             p::Token::Num(n) => stack.push(*n),
