@@ -1,5 +1,6 @@
 //TODO: add more arguments for cli (image filepath, server), build API, build simple frontend (react?)
 use::std::env;
+use::std::path::Path;
 mod parser;
 pub use parser::parser as p;
 mod image_generator;
@@ -12,9 +13,14 @@ fn main() {
 
     let mut x_size: i64 = 32;
     let mut y_size: i64 = 32;
+
+    let mut img_path = String::from("images/output.png");
+    let mut gen_image = false;
+
     let mut color: String = String::new();
 
-    let args: Vec<String> = env::args().collect();
+    let mut args: Vec<String> = env::args().collect();
+    args.push("null".to_string());
     for (idx, a) in args.iter().enumerate() {
         if a == "-xsize" {
             x_size = args[idx + 1].parse::<i64>().unwrap();
@@ -22,6 +28,13 @@ fn main() {
             y_size = args[idx + 1].parse::<i64>().unwrap();
         } else if a == "-c" {
             color = args[idx + 1].clone();
+        } else if a == "-i" {
+            img_path = args[idx + 1].clone();
+            gen_image = true;
+            //currently doesn't work, need path from root? just don't put path for now
+            if !Path::new(&img_path).exists() {
+                img_path = String::from("images/output.png")
+            }
         }
     }
 
@@ -53,10 +66,6 @@ fn main() {
         });
     }
 
-    for t in &postfix {
-        println!("{:?}", t)
-    }
-
     for x_val in x_window.0..x_window.1 {
         // for cli
         let normalized_x = x_val as f32 / x_normalizer_cli;
@@ -81,8 +90,9 @@ fn main() {
         let normalized_y = raw_height * y_normalizer_img;
         points.push((x_val as f32, normalized_y)); 
     }
-
-    generate_image(points, &color);
+    if gen_image {
+        generate_image(points, &color, &img_path);
+    }
 }
 
 fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {

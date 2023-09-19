@@ -287,7 +287,6 @@ pub mod parser {
         if !cur_num.is_empty() {
             output.push(Token::Num(cur_num.parse::<f32>().unwrap_or_default()));
         }
-        println!("tokens : {:?}", output);
         Ok(output)
     }
 

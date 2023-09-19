@@ -1,10 +1,11 @@
 pub mod image_generator {
+
     use image::{RgbImage, Rgb, ImageBuffer};
 
     pub const WIDTH: u32 = 1080;
     pub const HEIGHT: u32 = 1080;
 
-    pub fn generate_image(points: Vec<(f32, f32)>, color: &String) {
+    pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) {
         let mut img = generate_base_image();
         let color = get_color(color);
 
@@ -46,7 +47,7 @@ pub mod image_generator {
         }
 
         // write it out to a file
-        img.save("images/output.png").unwrap();
+        img.save(path).unwrap();
     }
 
     fn generate_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {
