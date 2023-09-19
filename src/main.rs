@@ -1,53 +1,12 @@
 // each horizontal represents one print on the graph, so one y value
 use::std::env;
-use::colored::Colorize;
 mod parser;
 pub use parser::parser as p;
-struct Horizontal {
-    x_window: (i64, i64, usize),
-    points: Vec<usize>,
-    is0: bool,
-}
+mod image_generator;
+pub use image_generator::image_generator as img;
 
-impl Horizontal {
-    // print constructs the string and prints it
-    fn print(&self, color: &String) {
-        let mut line: String;
-        if self.is0 {
-            line = std::iter::repeat("-").take(self.x_window.2).collect::<String>();
-        } else {
-            line = std::iter::repeat(" ").take(self.x_window.2).collect::<String>();
-        }
-        Self::replace_char(&mut line, self.x_window.2 / 2, '|');
-        for x in self.points.iter() {
-            Self::replace_char(&mut line, *x, '*');
-        }
-        println!("{}", Self::color(&mut line, color));
-    }
-
-    // replace_char replaces the character at index with newchar, used for plotting
-    fn replace_char(s: &mut str, index: usize, newchar: char) {
-        let s_bytes: &mut [u8] = unsafe { s.as_bytes_mut() };
-        assert!(index < s_bytes.len());
-        assert!(s_bytes[index].is_ascii());
-        assert!(newchar.is_ascii());
-        s_bytes[index] = newchar as u8;
-    }
-
-    fn color(input: &mut String, color: &String) -> String {
-        match color.as_str() {
-            "red" => input.red().to_string(),
-            "blue" => input.blue().to_string(),
-            "green" => input.green().to_string(),
-            "yellow" => input.yellow().to_string(),
-            "magenta" => input.magenta().to_string(),
-            "cyan" => input.cyan().to_string(),
-            "white" => input.white().to_string(),
-            "black" => input.black().to_string(),
-            _ => input.to_string(),
-        }
-    }
-}
+use crate::img::generate_image;
+mod horizontal;
 
 fn main() {
 
@@ -88,7 +47,7 @@ fn main() {
 
     let mut lines = Vec::new();
     for _ in 0..y_window.2 {
-        lines.push(Horizontal {
+        lines.push(horizontal::Horizontal {
             x_window: x_window,
             points: Vec::new(),
             is0: false,
@@ -112,6 +71,12 @@ fn main() {
     }
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print(&color));
+
+    let mut points = Vec::<(f32, f32)>::new();
+    points.push((0.0, 0.0));
+    points.push((10.0, 10.0));
+
+    generate_image(points);
 }
 
 fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {

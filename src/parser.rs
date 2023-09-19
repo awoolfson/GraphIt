@@ -75,7 +75,6 @@ pub mod parser {
     }
 
     // converts input string to tokens
-    // offloaded as much work as possible fromt the shunting yard algorithm to the tokenizer
     pub fn tokenize(input: String) -> Result<Vec<Token>, &'static str> {
         let functions = ["sin", "cos", "tan", "ln", "log", "sqrt", "abs"];
         let functions = functions.map(|s| String::from(s));
@@ -284,14 +283,6 @@ pub mod parser {
         if !cur_num.is_empty() {
             output.push(Token::Num(cur_num.parse::<f32>().unwrap_or_default()));
         }
-        // for printing tokens
-        // for t in &output {
-        //     match t {
-        //         Token::Num(n) => println!("{}", n),
-        //         Token::Operator(o) => println!("{:?}", o),
-        //         Token::Var => println!("x"),
-        //     }
-        // }
         Ok(output)
     }
 
@@ -305,9 +296,8 @@ pub mod parser {
         }
     }
 
+    // shunting yard algorithm
     pub fn infix_to_postfix(infix: Vec<Token>) -> Vec<Token>{
-        // shunting yard algorithm for arithmetic parsing
-        //TODO: add functions
         let mut output_queue: VecDeque<Token> = VecDeque::new();
         let mut stack: Vec<Operator> = Vec::new();
         for t in infix {
@@ -360,7 +350,6 @@ pub mod parser {
         }
         let mut output: Vec<Token> = Vec::new();
         for t in output_queue {
-            //println!("{:?}", t);
             output.push(t);
         }
         output
