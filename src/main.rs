@@ -1,4 +1,4 @@
-// each horizontal represents one print on the graph, so one y value
+//TODO: add more arguments for cli (image filepath, server), build API, build simple frontend (react?)
 use::std::env;
 mod parser;
 pub use parser::parser as p;
