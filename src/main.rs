@@ -35,15 +35,14 @@ fn main() {
     let clean_input = String::from(input_string.trim()); 
     let tokens = p::tokenize(clean_input).unwrap();
     let postfix = p::infix_to_postfix(tokens);
-    let x_window;
-    let y_window;
 
-    x_window = (-32, 32, 64);
-    y_window = (-16, 16, 32);
-    let increment_parts = 1; // how many parts to divide each 1 by for iteration along x axis, 1 is the minimum
+    let x_window = (-32, 32, 64); // (min, max, size)
+    let y_window = (-16, 16, 32);
 
-    let x_normalizer: f32 = x_window.2 as f32 / x_size as f32; // for conversion from real coords to math coords (/)
-    let y_normalizer: f32 = y_window.2 as f32 / y_size as f32; // for conversion from math coords to real coords (*)
+    let x_normalizer_cli: f32 = x_window.2 as f32 / x_size as f32;
+    let y_normalizer_cli: f32 = y_window.2 as f32 / y_size as f32;
+    let x_normalizer_img: f32 = 1080.0 / x_size as f32;
+    let y_normalizer_img: f32 = 1080.0 / y_size as f32;
 
     let mut lines = Vec::new();
     for _ in 0..y_window.2 {
@@ -54,28 +53,28 @@ fn main() {
         });
     }
 
+    let mut points = Vec::<(f32, f32)>::new();
+
     for x_val in x_window.0..x_window.1 {
-        // consider removing the increment feature, maybe this is silly
-        let normalized_x = x_val as f32 / x_normalizer;
-        for i in 0..increment_parts {
-            let incremented_x = normalized_x + (i as f32 / (x_size as f32)/increment_parts as f32);
-            let raw_height = math_on_postfix(&postfix, incremented_x);
-       
-            let normalized_y = raw_height * y_normalizer;
-    
-            if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
-                let horizontals_index = height_to_index(normalized_y, y_window);
-                lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
-            }
+        // for cli
+        let normalized_x = x_val as f32 / x_normalizer_cli;
+        let raw_height = math_on_postfix(&postfix, normalized_x);
+        let normalized_y = raw_height * y_normalizer_cli;
+        if normalized_y > y_window.0 as f32 && normalized_y < y_window.1 as f32 {
+            let horizontals_index = height_to_index(normalized_y, y_window);
+            lines[horizontals_index as usize].points.push((x_val - x_window.0).try_into().unwrap());
         }
     }
+    
+    for x_val in -x_size/2..x_size/2 {
+        let normalized_x = x_val as f32 * x_normalizer_img;
+        let raw_height = math_on_postfix(&postfix, x_val as f32);
+        let normalized_y = raw_height * y_normalizer_img;
+        points.push((normalized_x as f32, normalized_y)); 
+    }
+
     lines[y_window.2 as usize / 2].is0 = true;
     lines.iter().for_each(|x| x.print(&color));
-
-    let mut points = Vec::<(f32, f32)>::new();
-    points.push((0.0, 0.0));
-    points.push((10.0, 10.0));
-
     generate_image(points);
 }
 
