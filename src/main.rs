@@ -78,7 +78,7 @@ fn main() {
         points.push((x_val as f32, normalized_y)); 
     }
 
-    generate_image(points);
+    generate_image(points, &color);
 }
 
 fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
