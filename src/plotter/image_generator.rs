@@ -2,13 +2,14 @@ pub mod image_generator {
 
     use image::{RgbImage, Rgb, ImageBuffer};
 
-    pub const WIDTH: u32 = 1080;
-    pub const HEIGHT: u32 = 1080;
+    pub const WIDTH: u32 = 540;
+    pub const HEIGHT: u32 = 540;
 
-    pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) {
+    pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) -> Vec<u8> {
         let mut img = generate_base_image();
         let color = get_color(color);
 
+        // prev useless in current implementation, will be useful if optimizations are added
         let mut prev = (WIDTH, HEIGHT);
         for (x, y) in points {
             let x = x + WIDTH as f32 / 2.0;
@@ -33,6 +34,7 @@ pub mod image_generator {
                         }
                         inter_x += 1.0;
                     }
+                // these will need to move if optimizations are implemented
                 } else if prev_y < y {
                     for inter_y in prev_y as u32..y as u32 {
                         img.put_pixel(x as u32, inter_y, color);
@@ -47,7 +49,11 @@ pub mod image_generator {
         }
 
         // write it out to a file
-        img.save(path).unwrap();
+        if path != "null" {
+            img.save(path).unwrap();
+        }
+        let buf: Vec<u8> = img.as_raw().to_vec();
+        buf
     }
 
     fn generate_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {

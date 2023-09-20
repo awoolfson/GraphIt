@@ -1,6 +1,5 @@
 pub mod parser {
     use std::collections::VecDeque;
-    #[derive(Debug)]
 
     // used to store general tokens of the input string
     pub enum Token {
@@ -206,8 +205,12 @@ pub mod parser {
                         output.push(Token::Num(num));
                         output.push(Token::Operator(Operator::Multiply('*')));
                         cur_num = String::new();
-                    } else if let Some(&Token::Var) = output.last() {
-                        output.push(Token::Operator(Operator::Multiply('*')));
+                    } else {
+                        match output.last() {
+                            Some(Token::Var) => output.push(Token::Operator(Operator::Multiply('*'))),
+                            Some(Token::Operator(Operator::RightParen(_))) => output.push(Token::Operator(Operator::Multiply('*'))),
+                            _=> {}
+                        }
                     }
                     output.push(Token::Var);
                 }
