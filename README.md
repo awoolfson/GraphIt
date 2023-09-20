@@ -246,4 +246,4 @@ sin(x)tan(x)
                                 |
 ```
 
-![alt text](https://github.com/awoolfson/rust-plot/blob/master/examples/sintan.png?raw=true "image output")
+![alt text](https://github.com/awoolfson/rust-plot/blob/master/images/examples/sintan.png?raw=true "image output")
