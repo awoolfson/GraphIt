@@ -1,6 +1,5 @@
 pub mod parser {
     use std::collections::VecDeque;
-    #[derive(Debug)]
 
     // used to store general tokens of the input string
     pub enum Token {

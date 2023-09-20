@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphing Calculator</title>
+</head>
+<body>
+    <h1>Graphing Calculator</h1>
+    
+    <form id="calculator-form">
+        <label for="xsize">X Size:</label>
+        <input type="number" id="xsize" value=32><br><br>
+
+        <label for="ysize">Y Size:</label>
+        <input type="number" id="ysize" value=32><br><br>
+
+        <label for="color">Color:</label>
+        <input type="text" id="color" value="cyan"><br><br>
+
+        <label for="expression">Expression:</label>
+        <input type="text" id="expression" value="2x"><br><br>
+
+        <button type="button" id="generate-button">Generate Graph</button>
+    </form>
+
+    <div id="graph-container">
+        <img id="graph-image" src="" alt="Generated Graph">
+    </div>
+
+    <script type="module">
+        import init, {wasm_gen_image} from './pkg/rust_graphing_calc.js';
+        await init(); // Initialize the Wasm module
+        console.log('Wasm module initialized');
+        const generateButton = document.getElementById('generate-button');
+        generateButton.addEventListener('click', () => {
+            let color = document.getElementById('color').value;
+            let xsize = document.getElementById('xsize').value;
+            let ysize = document.getElementById('ysize').value;
+            let expression = document.getElementById('expression').value;
+            let imageBytes = wasm_gen_image(color, xsize, ysize, expression);
+
+            // Create a Data URL from the image data
+            let imageBase64 = btoa(String.fromCharCode(...imageBytes));
+            let imageUrl = `data:image/png;base64,${imageBase64}`;
+
+            // Create an <img> element and set its src attribute
+            let imageElement = document.createElement('img');
+            imageElement.src = imageUrl;
+
+            // Append the <img> element to display the image
+            let imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = ''; // Clear previous images
+            imageContainer.appendChild(imageElement);
+        });
+    </script>
+</body>
+</html>
