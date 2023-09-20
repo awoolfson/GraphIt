@@ -64,7 +64,14 @@ pub fn plot(
             points.push((x_val as f32, normalized_y)); 
         }
         let buf = img::generate_image(points, &color, &img_path);
-        return Some(buf);
+        let mut buf4 = Vec::<u8>::new();
+        for i in 1..=buf.len() {
+            buf4.push(buf[i - 1]);
+            if i % 3 == 0 {
+                buf4.push(1);
+            }
+        }
+        return Some(buf4);
     }
     None
 }

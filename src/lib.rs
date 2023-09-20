@@ -1,4 +1,4 @@
-use wasm_bindgen::{prelude::*, JsValue};
+use wasm_bindgen::prelude::*;
 extern crate console_error_panic_hook;
 // use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 
@@ -27,21 +27,7 @@ pub fn wasm_gen_image(
                 return buf;
             },
             None => {
-                return vec![];
+                return vec![0];
             },
         }
     }
-
-// #[wasm_bindgen]
-// pub fn draw_on_canvas(canvas: &HtmlCanvasElement) -> Result<(), JsValue> {
-//     let context = canvas
-//         .get_context("2d")?
-//         .unwrap()
-//         .dyn_into::<CanvasRenderingContext2d>()?;
-
-//     // Example: Draw a red rectangle
-//     context.set_fill_style(&"red".into());
-//     context.fill_rect(50.0, 50.0, 100.0, 100.0);
-
-//     Ok(())
-// }

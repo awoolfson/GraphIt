@@ -1,6 +1,7 @@
 pub mod image_generator {
 
     use image::{RgbImage, Rgb, ImageBuffer};
+    use base64::{engine::general_purpose, Engine as _};
 
     pub const WIDTH: u32 = 540;
     pub const HEIGHT: u32 = 540;
