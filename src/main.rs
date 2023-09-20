@@ -1,30 +1,19 @@
-//TODO: fix graph lines using crosses instead of lines, fix filepath for image generation
+/*
+TODO:
+1. try changing all fourth values to 255 instead of 1 (for alpha)
+2. if that doesn't work, add base image as png to directory and link it from javascript, then return points
+from wasm and manually draw them on canvas
+3. make local command always add image to images foler as output.png, remove any option for filepath
+ */
 use::std::env;
-use::std::path::Path;
 mod plotter;
-
-pub fn wasm_gen_image(
-    color: &str, 
-    x_size: isize, 
-    y_size: isize,
-    input_math: &str) {
-        plotter::plot(
-            String::from(color), 
-            x_size as i64, 
-            y_size as i64, 
-            String::from("images/output.png"),
-            true, 
-            false, 
-            String::from(input_math)
-        );
-    }
 
 fn main() {
 
     let mut x_size: i64 = 32;
     let mut y_size: i64 = 32;
 
-    let mut img_path = String::from("images/output.png");
+    let img_path = String::from("images/output.png");
     let mut gen_image = false;
 
     let mut color: String = String::new();
@@ -39,12 +28,7 @@ fn main() {
         } else if a == "-c" {
             color = args[idx + 1].clone();
         } else if a == "-i" {
-            img_path = args[idx + 1].clone();
             gen_image = true;
-            //currently doesn't work, need path from root? just don't put path for now
-            if !Path::new(&img_path).exists() {
-                img_path = String::from("images/output.png")
-            }
         }
     }
 
@@ -58,5 +42,4 @@ fn main() {
     let clean_input = String::from(input_string.trim()); 
 
     plotter::plot(color, x_size, y_size,  img_path, gen_image, true, clean_input);
-    //wasm_gen_image(&color, x_size as isize, y_size as isize, &clean_input);
 }
