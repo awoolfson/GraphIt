@@ -30,7 +30,7 @@ fn main() {
     let mut color: String = String::new();
 
     let mut args: Vec<String> = env::args().collect();
-    args.push("null".to_string());
+    args.push("nil".to_string());
     for (idx, a) in args.iter().enumerate() {
         if a == "-xsize" {
             x_size = args[idx + 1].parse::<i64>().unwrap();
