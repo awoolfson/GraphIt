@@ -9,11 +9,20 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
             color: cyan;
             text-align: center;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         form {
@@ -22,8 +31,11 @@
             border-radius: 10px;
             background-color: rgba(0, 0, 0, 0.8);
             text-align: center;
-            margin: 20px auto;
             max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px; /* Add margin to separate inputs from graph */
         }
 
         label {
@@ -61,32 +73,47 @@
 
         canvas {
             display: block;
-            margin: 0 auto;
             border: 1px solid cyan;
             border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+
+            .content {
+                flex-direction: row;
+                justify-content: center;
+                align-items: flex-start;
+            }
+
+            form {
+                margin-right: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>Graphing Calculator</h1>
     
-    <form id="calculator-form">
-        <label for="xsize">X Size:</label>
-        <input type="number" id="xsize" value="32"><br><br>
+    <div class="content">
+        <form id="calculator-form">
+            <label for="xsize">X Size:</label>
+            <input type="number" id="xsize" value="32"><br><br>
 
-        <label for="ysize">Y Size:</label>
-        <input type="number" id="ysize" value="32"><br><br>
+            <label for="ysize">Y Size:</label>
+            <input type="number" id="ysize" value="32"><br><br>
 
-        <label for="color">Color:</label>
-        <input type="text" id="color" value="cyan"><br><br>
+            <label for="color">Color:</label>
+            <input type="text" id="color" value="cyan"><br><br>
 
-        <label for="expression">Expression:</label>
-        <input type="text" id="expression" value="2x"><br><br>
+            <label for="expression">Expression:</label>
+            <input type="text" id="expression" value="2x"><br><br>
 
-        <button type="button" id="generate-button">Generate Graph</button>
-    </form>
+            <button type="button" id="generate-button">Generate Graph</button>
+        </form>
 
-    <canvas id="graph" width=540 height=540></canvas>
+        <canvas id="graph" width=540 height=540></canvas>
+    </div>
 
     <script type="module">
         import init, {wasm_gen_coords} from './pkg/rust_graphing_calc.js';
