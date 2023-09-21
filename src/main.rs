@@ -1,9 +1,9 @@
 /*
 TODO:
-1. try changing all fourth values to 255 instead of 1 (for alpha)
-2. if that doesn't work, add base image as png to directory and link it from javascript, then return points
-from wasm and manually draw them on canvas
-3. make local command always add image to images foler as output.png, remove any option for filepath
+1. full README update for wasm and web
+2. debug fading line at the end of picture on web
+3. update css
+4. add download button
  */
 use::std::env;
 mod plotter;
@@ -41,5 +41,5 @@ fn main() {
     }
     let clean_input = String::from(input_string.trim()); 
 
-    plotter::plot(color, x_size, y_size,  img_path, gen_image, true, clean_input);
+    plotter::plot(color, x_size, y_size, img_path, gen_image, true, false, clean_input);
 }

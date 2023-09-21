@@ -11,9 +11,10 @@ pub fn plot(
     x_size: i64, 
     y_size: i64,
     img_path: String,
-    gen_image: bool, 
+    gen_image: bool,
     print_cli: bool,
-    input_math: String) -> Option<Vec<u8>> {
+    wasm: bool,
+    input_math: String) -> Option<Vec<(f32, f32)>> {
 
     println!("plotting");
 
@@ -49,34 +50,29 @@ pub fn plot(
         lines.iter().for_each(|x| x.print(&color));
     }
 
-    if gen_image {
+    if gen_image || wasm {
         let x_normalizer_img: f32 = img::WIDTH as f32 / x_size as f32;
         let y_normalizer_img: f32 = img::HEIGHT as f32 / y_size as f32;
 
         let mut points = Vec::<(f32, f32)>::new();
-        
+   
         let lower = -(img::WIDTH as i32)/2;
         let upper = (img::WIDTH as i32)/2;
         for x_val in lower..upper {
             let normalized_x = x_val as f32 / x_normalizer_img;
             let raw_height = math_on_postfix(&postfix, normalized_x as f32);
             let normalized_y = raw_height * y_normalizer_img;
-            points.push((x_val as f32, normalized_y)); 
+            points.push((x_val as f32, normalized_y));
         }
-        let buf = img::generate_image(points, &color, &img_path);
-        let mut buf4 = Vec::<u8>::new();
-        for i in 1..=buf.len() {
-            buf4.push(buf[i - 1]);
-            if i % 3 == 0 {
-                buf4.push(1);
-            }
+        if wasm {
+            return Some(points);
         }
-        return Some(buf4);
+        img::generate_image(points, &color, &img_path);
     }
     None
 }
 
-fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
+pub fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
     let mut stack: Vec<f32> = Vec::new();
     for t in postfix {
         match t {
