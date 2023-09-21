@@ -1,13 +1,9 @@
 /*
 TODO:
-1. figure out why y values are registered as infinity and fix
-2. remove all path options and just set it as a constant in main
-3. modularize coord generation so that it can be called from wasm without making an image
-maybe a 3rd bool argument (gen coords?)
-4. edit base and base function for max red value instead of first
-5. make base drawing function seperate from everything else, only happens
-if base image not available, will need to load png into rust image for this
-6. also maybe set image size as constant 540x540, it looks nice
+1. full README update for wasm and web
+2. debug fading line at the end of picture on web
+3. update css
+4. add download button
  */
 use::std::env;
 mod plotter;
@@ -45,5 +41,5 @@ fn main() {
     }
     let clean_input = String::from(input_string.trim()); 
 
-    plotter::plot(color, x_size, y_size, img_path, gen_image, true, clean_input);
+    plotter::plot(color, x_size, y_size, img_path, gen_image, true, false, clean_input);
 }

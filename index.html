@@ -4,16 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graphing Calculator</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: cyan;
+            text-align: center;
+        }
+
+        form {
+            padding: 20px;
+            border: 1px solid cyan;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid cyan;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: green;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid cyan;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Graphing Calculator</h1>
     
     <form id="calculator-form">
         <label for="xsize">X Size:</label>
-        <input type="number" id="xsize" value=32><br><br>
+        <input type="number" id="xsize" value="32"><br><br>
 
         <label for="ysize">Y Size:</label>
-        <input type="number" id="ysize" value=32><br><br>
+        <input type="number" id="ysize" value="32"><br><br>
 
         <label for="color">Color:</label>
         <input type="text" id="color" value="cyan"><br><br>
@@ -43,21 +105,32 @@
         const generateButton = document.getElementById('generate-button');
 
         generateButton.addEventListener('click', () => {
+            console.log('clicked');
+
             const color = document.getElementById('color').value;
             const xsize = document.getElementById('xsize').value;
             const ysize = document.getElementById('ysize').value;
             const expression = document.getElementById('expression').value;
 
-            const coords = wasm_gen_coords(xsize, ysize, color, expression);
+            // call wasm function for coordinates
+            const coords = wasm_gen_coords(xsize, ysize, expression);
 
+            // reset to base image before drawing
             ctx.drawImage(base,0,0);
 
+            ctx.strokeStyle = color;
+            let last_x = coords[0] + 270;;
+            let last_y = 270 - coords[1];
+            ctx.beginPath();
             for (let i = 0; i < coords.length; i += 2) {
                 const x = coords[i] + 270;
-                const y = -x + 540; // change x to y once bug fixed
-                console.log(x, y);
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, 1, 1);
+                const y = 270 - coords[i + 1];
+
+                ctx.moveTo(last_x, last_y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                last_x = x;
+                last_y = y;
             }
         });
     </script>

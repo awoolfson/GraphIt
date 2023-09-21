@@ -1,12 +1,12 @@
 pub mod image_generator {
 
-    use image::{RgbImage, Rgb, ImageBuffer};
+    use image::{RgbImage, Rgb, ImageBuffer, open};
 
     pub const WIDTH: u32 = 540;
     pub const HEIGHT: u32 = 540;
 
     pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) {
-        let mut img = generate_base_image();
+        let mut img = get_base_image();
         let color = get_color(color);
 
         // prev useless in current implementation, will be useful if optimizations are added
@@ -54,10 +54,21 @@ pub mod image_generator {
         }
     }
 
-    fn generate_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {
-        let mut img = RgbImage::new(WIDTH, HEIGHT);
-        generate_axes(WIDTH / 2, WIDTH / 2, 6, &mut img);
-        img
+    fn get_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {
+        let path = String::from("base540.png");
+        let img_res = open(path);
+        match img_res {
+            Ok(img) => {
+                return img.to_rgb8();
+            },
+            Err(_) => {
+                print!("base png not found, generating from scratch");
+                let mut img = RgbImage::new(WIDTH, HEIGHT);
+                generate_axes(WIDTH / 2, WIDTH / 2, 6, &mut img);
+                img.save("base540.png").unwrap();
+                img
+            },
+        }
     }
 
     fn generate_axes(
@@ -70,12 +81,14 @@ pub mod image_generator {
             let red = num * 25;
             let col = Rgb([red as u8, 0, 0]);
             for i in 0..HEIGHT {
-                if img.get_pixel(center, i).0[0] == 0 {
+                let existing_red = img.get_pixel(i, center).0[0];
+                if existing_red < red as u8 {
                     img.put_pixel(center, i, col);
                 }
             }
             for i in 0..WIDTH {
-                if img.get_pixel(i, center).0[0] == 0 {
+                let existing_red = img.get_pixel(i, center).0[0];
+                if existing_red < red as u8 {
                     img.put_pixel(i, center, col);
                 }
             }
