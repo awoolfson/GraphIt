@@ -4,6 +4,10 @@ TODO:
 2. if that doesn't work, add base image as png to directory and link it from javascript, then return points
 from wasm and manually draw them on canvas
 3. make local command always add image to images foler as output.png, remove any option for filepath
+4. edit base and base function for max red value instead of first
+5. make base drawing function seperate from everythin else, only happens
+if base image not available
+6. modularize coord generation so that it can be called from wasm without making an image
  */
 use::std::env;
 mod plotter;
@@ -41,5 +45,5 @@ fn main() {
     }
     let clean_input = String::from(input_string.trim()); 
 
-    plotter::plot(color, x_size, y_size,  img_path, gen_image, true, clean_input);
+    plotter::plot(color, x_size, y_size, img_path, gen_image, true, clean_input);
 }

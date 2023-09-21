@@ -13,7 +13,7 @@ pub fn plot(
     img_path: String,
     gen_image: bool, 
     print_cli: bool,
-    input_math: String) -> Option<Vec<u8>> {
+    input_math: String) -> Option<Vec<(f32, f32)>> {
 
     println!("plotting");
 
@@ -63,20 +63,13 @@ pub fn plot(
             let normalized_y = raw_height * y_normalizer_img;
             points.push((x_val as f32, normalized_y)); 
         }
-        let buf = img::generate_image(points, &color, &img_path);
-        let mut buf4 = Vec::<u8>::new();
-        for i in 1..=buf.len() {
-            buf4.push(buf[i - 1]);
-            if i % 3 == 0 {
-                buf4.push(1);
-            }
-        }
-        return Some(buf4);
+        img::generate_image(points.clone(), &color, &img_path);
+        return Some(points);
     }
     None
 }
 
-fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
+pub fn math_on_postfix(postfix: &Vec<p::Token>, x: f32) -> f32 {
     let mut stack: Vec<f32> = Vec::new();
     for t in postfix {
         match t {

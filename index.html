@@ -27,40 +27,38 @@
     <canvas id="graph" width=540 height=540></canvas>
 
     <script type="module">
-        import init, {wasm_gen_image} from './pkg/rust_graphing_calc.js';
-
-        await init(); // Initialize the Wasm module
-        console.log('Wasm module initialized');
+        import init, {wasm_gen_coords} from './pkg/rust_graphing_calc.js';
 
         const canvas = document.getElementById('graph');
         const ctx = canvas.getContext('2d');
+
+        let base = new Image();
+        base.src = "base540.png"; // can also be a remote URL e.g. http://
+        base.onload = function() {
+            ctx.drawImage(base,0,0);
+        };
+
+        await init(); // Initialize the Wasm module
           
         const generateButton = document.getElementById('generate-button');
+
         generateButton.addEventListener('click', () => {
             const color = document.getElementById('color').value;
             const xsize = document.getElementById('xsize').value;
             const ysize = document.getElementById('ysize').value;
             const expression = document.getElementById('expression').value;
 
-            const image = new Uint8ClampedArray(wasm_gen_image(color, xsize, ysize, expression));
-            const settings = {
-                colorSpace: "srgb", // Can be set to "srgb" or "display-p3"
-            };
-            const imageData = new ImageData(image, canvas.width, canvas.height, settings);
+            const coords = wasm_gen_coords(xsize, ysize, color, expression);
 
-            console.log(imageData.colorSpace);
-            console.log(imageData.width);
-            console.log(imageData.height);
-            console.log(imageData.data);
+            ctx.drawImage(base,0,0);
 
-            const bitmapPromise = createImageBitmap(imageData);
-            bitmapPromise.then((bitmap) => {
-                console.log(bitmap);
-                ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-            }).catch((error) => {
-                console.log(error);
-            });
-            console.log('end');
+            for (let i = 0; i < coords.length; i += 2) {
+                const x = coords[i] + 270;
+                const y = -x + 540; // change x to y once bug fixed
+                console.log(x, y);
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 1, 1);
+            }
         });
     </script>
 </body>

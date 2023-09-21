@@ -5,7 +5,7 @@ pub mod image_generator {
     pub const WIDTH: u32 = 540;
     pub const HEIGHT: u32 = 540;
 
-    pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) -> Vec<u8> {
+    pub fn generate_image(points: Vec<(f32, f32)>, color: &String, path: &String) {
         let mut img = generate_base_image();
         let color = get_color(color);
 
@@ -52,8 +52,6 @@ pub mod image_generator {
         if path != "null" {
             img.save(path).unwrap();
         }
-        let buf: Vec<u8> = img.as_raw().to_vec();
-        buf
     }
 
     fn generate_base_image() -> ImageBuffer<Rgb<u8>, Vec<u8>> {
