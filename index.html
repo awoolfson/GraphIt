@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href=".">
     <title>Graphing Calculator</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
     </style>
-        
 
     <style>
         body {
@@ -132,7 +130,7 @@
         </div>
     </div>
 
-    <script type="module">
+    <script type="text/javascript">
         import init, {wasm_gen_coords} from './pkg/rust_graphing_calc.js';
 
         const canvas = document.getElementById('graph');
