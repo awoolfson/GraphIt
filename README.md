@@ -1,6 +1,6 @@
-# RUST PLOT
+# GraphIt
 
-This is a console-based graphing calculator written in Rust programming language. It is designed to solve and visualize various mathematical functions.
+GraphIt is a graphing calculator that can be operated from the terminal, or on the web. The core engine of it is written in Rust, and compiled to WASM for the online version.
 
 ## Installation
 
@@ -12,13 +12,23 @@ Once Rust is installed, you can clone the repository using Git:
 git clone git@github.com:awoolfson/rust-plot.git
 ```
 
-Then navigate to the project directory and run the following command to build and run the program:
+Then navigate to the project directory and run the following command to build and run the program for use in the terminal:
 
 ```bash
 cargo run
 ```
 
+If you would like to host an instance of the web page locally, you can use cargo to install wasm-pack for Rust, then run
+
+```bash
+wasm-pack build --target web
+```
+
+(I haven't decided on a hosting service to deploy the web page using yet so it isn't currenlty publicly available, although I plan on doing this soon)
+
 ## Usage
+
+### in the terminal
 
 The calculator addition, subtraction, multiplication, division, trig functions, and more. To use the calculator, enter a function of the variable "x" after the the program prompts you "f(x) = ..."
 For example, to plot a straight horizontal line type...
