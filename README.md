@@ -9,7 +9,7 @@ To install the calculator, you need to have Rust installed on your computer. Fol
 Once Rust is installed, you can clone the repository using Git:
 
 ```bash
-git clone git@github.com:awoolfson/rust-plot.git
+git clone git@github.com:awoolfson/GraphIt.git
 ```
 
 Then navigate to the project directory and run the following command to build and run the program for use in the terminal:
@@ -256,4 +256,4 @@ sin(x)tan(x)
                                 |
 ```
 
-![alt text](https://github.com/awoolfson/rust-plot/blob/master/images/examples/sintan.png?raw=true "image output")
+![alt text](https://github.com/awoolfson/GraphIt/blob/master/images/examples/sintan.png?raw=true "image output")
