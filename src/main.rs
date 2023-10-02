@@ -1,9 +1,8 @@
 /*
 TODO:
-1. full README update for wasm and web
-2. debug fading line at the end of picture on web
-3. update css
-4. add download button
+1. debug fading line at the end of picture on web
+2. fix vertical lines with tan
+3. add more functions
  */
 use::std::env;
 mod plotter;
