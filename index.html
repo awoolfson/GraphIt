@@ -49,6 +49,19 @@
             margin-right: 20px; /* Add margin to separate inputs from graph */
         }
 
+        .instructions {
+            padding: 20px;
+            border: 1px solid cyan;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 1);
+            text-align: left;
+            max-width: 300px;
+            display: flex;
+            flex-direction: row;
+            margin-right: 20px; /* Add margin to separate inputs from graph */ 
+            margin-top: 20px;
+        }
+
         label {
             display: block;
             margin-top: 10px;
@@ -105,9 +118,20 @@
     </style>
 </head>
 <body>
-    <h1>Graphing Calculator</h1>
+    <h1>GraphIt</h1>
     
     <div class="content">
+
+        <div class="instructions" id="instructions">
+            <p>Welcome to GraphIt! Enter an expression with respect to <code>x</code>.
+            For example, <code>x^3 + 3x^2 + x</code> will generate a cubic graph.
+            Use the <code>Width</code> and <code>Height</code> fields to adjust the bounds of the graph.
+            Use the <code>Color</code> field to change the color of the line generated.
+            Click the <code>Generate Graph</code> button to generate the graph.
+            Click the <code>Save Graph</code> button to save the graph as a PNG image.
+            For more information visit <a href = https://github.com/awoolfson/GraphIt>GraphIt on GitHub</a></p>
+        </div>
+
         <form id="calculator-form">
             <label for="xsize">Width</label>
             <input type="number" id="xsize" value="32"><br><br>
@@ -179,6 +203,7 @@
             // Apply color to various elements
             document.querySelector('h1').style.color = event.target.value;
             document.querySelector('form').style.borderColor = event.target.value;
+            document.querySelector('canvas').style.borderColor = event.target.value;
             const inputs = document.querySelectorAll('input');
             for (let i = 0; i < inputs.length; i++) {
                 inputs[i].style.borderColor = event.target.value;
@@ -187,8 +212,12 @@
             for (let i = 0; i < labels.length; i++) {
                 labels[i].style.color = event.target.value;
             }
-            document.querySelector('canvas').style.borderColor = event.target.value;
-            document.querySelector('button').color = event.target.value;
+            const pars = document.querySelectorAll('p');
+            for (let i = 0; i < pars.length; i++) {
+                pars[i].style.color = event.target.value;
+            }
+            const instructions = document.getElementById("instructions")
+            instructions.style.borderColor = event.target.value;
         }
 
         // Add an event listener to the color picker
