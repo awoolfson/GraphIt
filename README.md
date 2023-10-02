@@ -24,8 +24,6 @@ If you would like to host an instance of the web page locally, you can use cargo
 wasm-pack build --target web
 ```
 
-(I haven't decided on a hosting service to deploy the web page using yet so it isn't currenlty publicly available, although I plan on doing this soon)
-
 ## Usage
 
 ### in the terminal
