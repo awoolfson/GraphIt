@@ -1,0 +1,14 @@
+{
+  "name": "rust-graphing-calc",
+  "version": "0.1.0",
+  "files": [
+    "rust_graphing_calc_bg.wasm",
+    "rust_graphing_calc.js",
+    "rust_graphing_calc.d.ts"
+  ],
+  "module": "rust_graphing_calc.js",
+  "types": "rust_graphing_calc.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
