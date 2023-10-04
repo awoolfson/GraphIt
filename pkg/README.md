@@ -1,6 +1,6 @@
 # GraphIt
 
-GraphIt is a graphing calculator that can be operated from the terminal, or on the web. The core engine of it is written in Rust, and compiled to WASM for the online version.
+GraphIt is a graphing calculator that can be operated from the terminal, or on the web [here](https://awoolfson.github.io/GraphIt/). The core engine of it is written in Rust, and compiled to WASM for the online version.
 
 ## Installation
 
@@ -23,8 +23,6 @@ If you would like to host an instance of the web page locally, you can use cargo
 ```bash
 wasm-pack build --target web
 ```
-
-(I haven't decided on a hosting service to deploy the web page using yet so it isn't currenlty publicly available, although I plan on doing this soon)
 
 ## Usage
 

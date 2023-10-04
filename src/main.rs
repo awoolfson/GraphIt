@@ -1,8 +1,9 @@
 /*
 TODO:
-1. debug fading line at the end of picture on web
-2. fix vertical lines with tan
-3. add more functions
+fix vertical lines with tan
+debug ln and log
+add more functions
+debug fading line at the end of picture on web
  */
 use::std::env;
 mod plotter;

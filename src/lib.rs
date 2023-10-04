@@ -31,8 +31,16 @@ pub fn wasm_gen_coords(
                 let points = points_op.unwrap();
                 let mut flat: Vec<i32> = Vec::new();
                 for (x, y) in points {
-                    flat.push(x.round() as i32);
-                    flat.push(y.round() as i32);
+                    if x.signum().is_nan() {
+                        flat.push(i32::MAX);
+                    } else {
+                        flat.push(x.round() as i32);
+                    }
+                    if y.signum().is_nan() {
+                        flat.push(i32::MAX);
+                    } else {
+                        flat.push(y.round() as i32);
+                    }
                 }
                 return flat;
             },
